@@ -65,5 +65,6 @@ class SimpleBaseTest {
 		String plan = poli.studyPlan(s2);
 		assertNotNull(plan, "Missing study plan");
 		assertTrue(plan.contains("Object"), "Missing OOP course");
+
 	}
 }
