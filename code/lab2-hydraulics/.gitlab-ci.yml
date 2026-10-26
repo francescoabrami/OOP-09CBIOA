@@ -1,0 +1,43 @@
+variables:
+  MAVEN_OPTS: >-
+    -Dhttps.protocols=TLSv1.2
+    -Djava.awt.headless=true
+    -XX:+DisableAttachMechanism
+
+  MAVEN_CLI_OPTS: >-
+    --batch-mode
+    --fail-at-end
+    --show-version
+    --no-transfer-progress
+
+verify-skip:
+  stage: test
+  tags:
+    - oop
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BEFORE_SHA == "0000000000000000000000000000000000000000"'
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - |
+      set +x
+      echo "Not running any test when creating a new branch"
+      echo "Real tests will be executed when pushing some commit"
+      exit 1
+
+verify:
+  stage: test
+  tags:
+    - oop
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BEFORE_SHA != "0000000000000000000000000000000000000000"
+
+  script:
+    - 'mvn $MAVEN_CLI_OPTS test'
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml

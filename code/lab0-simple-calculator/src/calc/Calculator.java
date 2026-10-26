@@ -37,9 +37,9 @@ public class Calculator {
             }
 
             // Get user input for numbers
-            in = IO.readln("Enter first operand: ");
+            in = IO.readln("Please, enter first number: ");
             num1 = Double.parseDouble(in);
-            in = IO.readln("Enter second operand: ");
+            in = IO.readln("Please, enter second number: ");
             num2 = Double.parseDouble(in);
 
             // Compute result
@@ -96,6 +96,8 @@ public class Calculator {
     public static double add(double num1, double num2) {
         return num1 + num2;
     }
+
+    // IMPLEMENTED SUBTRACION!
 
     public static double subtract(double num1, double num2) {
         return num1 - num2;

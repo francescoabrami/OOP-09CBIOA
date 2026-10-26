@@ -76,7 +76,7 @@ public class University {
 	}
 
 	/**
-	 * Enrol a student in the university
+	 * Enroll a student in the university
 	 * The university assigns ID numbers 
 	 * progressively from number 10000.
 	 * 
@@ -94,12 +94,12 @@ public class University {
 
     	}
 
-    	int id = nextStudentId++;
+		int id = nextStudentId++;
 
     	Student student = new Student(id, first, last);
 		students[id - FIRST_ID] = student;
 
-		logger.info("New student enrolled: "+nextStudentId+" "+student.getStudentFirst()+" "+student.getStudentLast());
+		logger.info("New student enrolled: "+id+" "+student.getStudentFirst()+" "+student.getStudentLast());
     	return id;
 	}
 	
@@ -151,7 +151,7 @@ public class University {
 		Course course = new Course(code, title, teacher);
 		courses[code - FIRST_COURSE_CODE] = course;
 
-		logger.info("New course activated: " + code + ", " + course.getTitle() + ", " + course.getTeacher());
+		logger.info("New course activated: " + code + "," + course.getTitle() + "," + course.getTeacher());
 	
 		return code;
 
@@ -208,8 +208,9 @@ public class University {
         	course.setStudent(student, course, participantsNumber);
         	course.setParticipantsNumber();
 
-			logger.info("Student: " + student + "signed up for course " + course);
-    	}
+			logger.info("Student: " + student.getId() + "signed up for course " + course.getCourseId());
+    	} 
+
 	}
 
 	/**
@@ -321,7 +322,7 @@ public class University {
 		Course course = courses[courseId - FIRST_COURSE_CODE];
 		course.setExams(exam);
 
-		logger.info("Student: " + student + "took an exam in course " + course + " with grade " + grade);
+		logger.info("Student " + student + "took an exam in course " + course + " with grade " + grade);
 	
 	}
 
