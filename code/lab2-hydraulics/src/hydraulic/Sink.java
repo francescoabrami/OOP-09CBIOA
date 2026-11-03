@@ -6,10 +6,40 @@ package hydraulic;
  */
 public class Sink extends Element {
 
+	private Element input = null;
+
 	/**
-	 * Constructor
-	 * @param name name of the sink element
+	 * Constructor of the Sink;
+	 * 
+	 * @param name name of the sink element;
 	 */
 	public Sink(String name) {
+
+		super(name);
+
 	}
+
+	@Override 
+	public void connect(Element elem){
+
+		elem.setInput(this);
+
+		return;
+
+	}
+
+	@Override
+	public void setInput(Element input) {
+
+		this.input = input;
+
+	}
+
+	@Override
+	public Element getInput() {
+
+		return this.input;
+
+	}
+
 }

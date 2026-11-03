@@ -8,20 +8,50 @@ package hydraulic;
  */
 public class Source extends Element {
 
-	/**
-	 * constructor
-	 * @param name name of the source element
-	 */
-	public Source(String name) {
-	}
+	private Element output = null;
 
 	/**
-	 * Define the flow of the source to be used during the simulation
-	 *
-	 * @param flow flow of the source (in cubic meters per hour)
+	 * constructor
+	 * @param name name of the source element Source
 	 */
+	public Source(String name) {
+
+		super(name);
+
+	}
+
+	@Override
+	public void connect(Element elem){
+
+		this.output = elem;
+		elem.setInput(this);
+
+	}
+
+	@Override
+	public Element getOutput(){
+
+		return this.output;
+
+	}
+
+	@Override
+	public void setOutput(Element elem){
+
+		this.output = elem;
+
+	}
+
 	public void setFlow(double flow){
-		// TODO: to be implemented
+
+		this.outFlow = flow;
+
+		if (output != null) {
+
+			output.setFlow(flow);
+
+		}
+		
 	}
 
 }

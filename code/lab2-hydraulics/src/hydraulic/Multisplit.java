@@ -9,13 +9,73 @@ package hydraulic;
 
 public class Multisplit extends Split {
 
-	/**
-	 * Constructor
-	 * @param name the name of the multi-split element
-	 * @param numOutput the number of outputs
-	 */
+	private Element[] outputs;
+	private Element input;
+	private double inFlow, outFlow;
+	private double[] proportions = {0.0};
+
 	public Multisplit(String name, int numOutput) {
+
 		super(name);
+		
+		outputs = new Element[numOutput];
+
+	}
+
+	@Override
+    public void connect(Element elem, int index) {
+
+        if (index < 0 || index >= outputs.length) {
+
+            return;
+
+        }
+		
+        outputs[index] = elem;
+		elem.setInput(this);
+
+    }
+
+	public Element[] getOutputs() {
+
+		return outputs;
+
+	}
+
+	public double getInFlow() {
+
+		return inFlow;
+
+	}
+
+	@Override
+	public void setInput(Element entrata) {
+
+		this.input = entrata;
+
+	}
+
+	public void setFlow(double inFlow) {
+
+		this.inFlow = inFlow;
+		this.outFlow = inFlow;
+		this.setOutFlow(inFlow);
+
+	}
+
+	public double getOutFlow() {
+
+		return outFlow;
+
+	}
+
+	public void setOutFlow(double outFlow) {
+		
+		for(int i = 0; i < proportions.length; i++){
+
+			outputs[i].setFlow(proportions[i]);
+
+		}
 	}
 	
 	/**
@@ -28,7 +88,38 @@ public class Multisplit extends Split {
 	 * @param proportions the proportions of flow for each output
 	 */
 	public void setProportions(double... proportions) {
-		// TODO: to be implemented
+
+		double checkSum = 0.0;
+
+		for (int i = 0; i < proportions.length; i++) {
+
+			checkSum =+ proportions[i];
+
+		}
+
+		if (checkSum == 1.0) {
+
+			this.proportions = proportions;
+
+			for (int i = 0; i < proportions.length; i++) {
+
+				if(outputs[i] != null){
+
+					Element out = outputs[i];
+					out.setFlow(proportions[i] * outFlow);
+
+				}
+				
+			}
+
+		}
+
+		else {
+
+			System.out.println("The sum of the proportions is different than 1.0!\n\n");
+
+		}
+
 	}
 	
 }
