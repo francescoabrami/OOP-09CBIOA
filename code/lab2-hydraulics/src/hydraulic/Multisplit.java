@@ -93,7 +93,7 @@ public class Multisplit extends Split {
 
 		for (int i = 0; i < proportions.length; i++) {
 
-			checkSum =+ proportions[i];
+			checkSum += proportions[i];
 
 		}
 
@@ -119,6 +119,12 @@ public class Multisplit extends Split {
 			System.out.println("The sum of the proportions is different than 1.0!\n\n");
 
 		}
+
+	}
+
+	public double[] getProportions() {
+
+		return proportions;
 
 	}
 	

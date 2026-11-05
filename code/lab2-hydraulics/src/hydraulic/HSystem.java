@@ -1,5 +1,7 @@
 package hydraulic;
 
+import java.util.Arrays;
+
 /**
  * Main class that acts as a container of the elements for
  * the simulation of a hydraulics system
@@ -53,15 +55,7 @@ public class HSystem {
 
 	public Element[] getElements(){
 
-		Element[] currentElement = new Element[elmentsNumber];
-
-		for (int i = 0; i < elmentsNumber; i++) {
-
-			currentElement[i] = element[i];
-
-		}
-
-		return currentElement;
+		return Arrays.copyOf(element, elmentsNumber);
 
 	}
 
@@ -322,8 +316,168 @@ public class HSystem {
 	 * Before performing a checked simulation, the max flows of the elements in the
 	 * system must be defined.
 	 */
+
+
 	public void simulate(SimulationObserver observer, boolean enableMaxFlowCheck) {
-		//TODO: to be implemented
+
+		Element root = element[0];
+
+		if (enableMaxFlowCheck) {
+
+			simulateR(observer, enableMaxFlowCheck, root);
+
+		} else { 
+
+			simulate(observer);
+
+		}
+
+	}	
+
+	public void simulateR(SimulationObserver observer, boolean enableMaxFlowCheck, Element root) {
+
+		if (root == null) {
+			return;
+		}
+
+		// SOURCE
+		if (root instanceof Source) {
+
+			Source e = (Source) root;
+
+			observer.notifyFlow("Source", e.getName(),
+					SimulationObserver.NO_FLOW, e.getOutFlow());
+
+			simulateR(observer, enableMaxFlowCheck, e.getOutput());
+
+		}
+
+		// SINK
+		else if (root instanceof Sink) {
+
+			Sink e = (Sink) root;
+
+			double inFlow = e.getInFlow();
+			double maxFlow = e.getMaxFlow();
+
+			observer.notifyFlow("Sink", e.getName(),
+					inFlow, SimulationObserver.NO_FLOW);
+
+			if (enableMaxFlowCheck && inFlow > maxFlow) {
+
+				observer.notifyFlowError("Sink", e.getName(),
+						inFlow, maxFlow);
+
+			}
+
+		}
+
+		// TAP
+		else if (root instanceof Tap) {
+
+			Tap e = (Tap) root;
+
+			double inFlow = e.getInFlow();
+			double maxFlow = e.getMaxFlow();
+
+			observer.notifyFlow("Tap", e.getName(),
+					inFlow, e.getOutFlow());
+
+			if (enableMaxFlowCheck && inFlow > maxFlow) {
+
+				observer.notifyFlowError("Tap", e.getName(),
+						inFlow, maxFlow);
+
+			}
+
+			simulateR(observer, enableMaxFlowCheck, e.getOutput());
+
+		}
+
+		// MULTISPLIT
+		else if (root instanceof Multisplit) {
+
+			Multisplit e = (Multisplit) root;
+
+			double inFlow = e.getInFlow();
+			double maxFlow = e.getMaxFlow();
+
+			double[] proportions = e.getProportions();
+			double[] flows = new double[proportions.length];
+
+			for (int i = 0; i < proportions.length; i++) {
+
+				flows[i] = inFlow * proportions[i];
+
+			}
+
+			observer.notifyFlow("Multisplit", e.getName(),
+					inFlow, flows);
+
+			if (enableMaxFlowCheck && inFlow > maxFlow) {
+
+				observer.notifyFlowError("Multisplit", e.getName(),
+						inFlow, maxFlow);
+
+			}
+
+			Element[] outs = e.getOutputs();
+
+			for (int i = 0; i < outs.length; i++) {
+
+				if (outs[i] != null) {
+
+					outs[i].setFlow(flows[i]);
+
+					simulateR(observer, enableMaxFlowCheck, outs[i]);
+
+				}
+
+			}
+
+		}
+
+		// SPLIT
+		else if (root instanceof Split) {
+
+			Split e = (Split) root;
+
+			double inFlow = e.getInFlow();
+			double maxFlow = e.getMaxFlow();
+
+			Element[] outs = e.getOutputs();
+
+			double[] flows = new double[outs.length];
+
+			for (int i = 0; i < outs.length; i++) {
+
+				flows[i] = inFlow / 2;
+
+			}
+
+			observer.notifyFlow("Split", e.getName(), inFlow, flows);
+
+			if (enableMaxFlowCheck && inFlow > maxFlow) {
+
+				observer.notifyFlowError("Split", e.getName(),
+						inFlow, maxFlow);
+
+			}
+
+			for (int i = 0; i < outs.length; i++) {
+
+				if (outs[i] != null) {
+
+					outs[i].setFlow(flows[i]);
+
+					simulateR(observer, enableMaxFlowCheck, outs[i]);
+
+				}
+
+			}
+
+		}
+
 	}
 
 }

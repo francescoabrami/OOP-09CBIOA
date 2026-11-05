@@ -16,7 +16,7 @@ public abstract class Element {
 	public static final int MAX_OUTPUTS = 2;
 
 	String name;
-	double inFlow, outFlow;
+	double inFlow, outFlow, maxFlow;
 
 	/**
 	 * Constructor of an Element
@@ -96,6 +96,13 @@ public abstract class Element {
 	
 	public void setMaxFlow(double maxFlow) {
 
+		this.maxFlow = maxFlow;
+
+	}
+
+	public double getMaxFlow() {
+
+		return maxFlow;
 
 	}
 
