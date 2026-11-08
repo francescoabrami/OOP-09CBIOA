@@ -10,15 +10,14 @@ package hydraulic;
 public class Multisplit extends Split {
 
 	private Element[] outputs;
-	private Element input;
-	private double inFlow, outFlow;
 	private double[] proportions = {0.0};
 
 	public Multisplit(String name, int numOutput) {
 
 		super(name);
-		
+
 		outputs = new Element[numOutput];
+		proportions = new double[numOutput];
 
 	}
 
@@ -48,12 +47,12 @@ public class Multisplit extends Split {
 
 	}
 
-	@Override
-	public void setInput(Element entrata) {
+	// @Override
+	// public void setInput(Element entrata) {
 
-		this.input = entrata;
+	// 	this.input = entrata;
 
-	}
+	// }
 
 	public void setFlow(double inFlow) {
 
@@ -69,13 +68,19 @@ public class Multisplit extends Split {
 
 	}
 
-	public void setOutFlow(double outFlow) {
-		
-		for(int i = 0; i < proportions.length; i++){
 
-			outputs[i].setFlow(proportions[i]);
+	public void setOutFlow(double outFlow) {
+
+		this.outFlow = outFlow;
+
+		for (int i = 0; i < proportions.length; i++) {
+
+			if (outputs[i] != null) {
+				outputs[i].setFlow(proportions[i] * outFlow);
+			}
 
 		}
+
 	}
 	
 	/**
@@ -86,40 +91,26 @@ public class Multisplit extends Split {
 	 * Otherwise a check would detect an error.
 	 * 
 	 * @param proportions the proportions of flow for each output
-	 */
+	*/
+
 	public void setProportions(double... proportions) {
 
-		double checkSum = 0.0;
-
-		for (int i = 0; i < proportions.length; i++) {
-
-			checkSum += proportions[i];
-
+		if (proportions.length != outputs.length) {
+			return;
 		}
 
-		if (checkSum == 1.0) {
+		double sum = 0.0;
 
-			this.proportions = proportions;
-
-			for (int i = 0; i < proportions.length; i++) {
-
-				if(outputs[i] != null){
-
-					Element out = outputs[i];
-					out.setFlow(proportions[i] * outFlow);
-
-				}
-				
+		for (double p : proportions) {
+			if (p < 0.0) {
+				return;
 			}
-
+			sum += p;
 		}
 
-		else {
-
-			System.out.println("The sum of the proportions is different than 1.0!\n\n");
-
+		if (Math.abs(sum - 1.0) < 0.000001) {
+			this.proportions = proportions.clone();
 		}
-
 	}
 
 	public double[] getProportions() {

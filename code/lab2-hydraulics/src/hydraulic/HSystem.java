@@ -112,6 +112,39 @@ public class HSystem {
 			return;
 
 		}
+
+		else if (root instanceof Multisplit) {
+
+			Multisplit m = (Multisplit) root;
+
+			m.setFlow(portata);
+
+			double[] proportions = m.getProportions();
+			Element[] outputs = m.getOutputs();
+
+			double[] flows = new double[proportions.length];
+
+			for (int i = 0; i < proportions.length; i++) {
+
+				flows[i] = portata * proportions[i];
+
+			}
+
+			observer.notifyFlow("Multisplit", m.getName(), portata, flows);
+
+			for (int i = 0; i < outputs.length; i++) {
+
+				if (outputs[i] != null) {
+
+					outputs[i].setFlow(flows[i]);
+
+					simulateR(outputs[i], observer, flows[i]);
+
+				}
+
+			}
+
+		}
 		
 		else if (root instanceof Split) {
 

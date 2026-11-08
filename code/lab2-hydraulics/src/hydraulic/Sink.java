@@ -19,13 +19,11 @@ public class Sink extends Element {
 
 	}
 
-	@Override 
-	public void connect(Element elem){
+	@Override
+	public void connect(Element elem) {
 
-		elem.setInput(this);
-
-		return;
-
+	
+				
 	}
 
 	@Override

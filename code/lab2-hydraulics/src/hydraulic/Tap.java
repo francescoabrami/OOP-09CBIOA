@@ -59,27 +59,15 @@ public class Tap extends Element {
 
 	}
 
-	/**
-	 * Set whether the tap is open or not. The status is used during the simulation.
-	 *
-	 * @param open opening status of the tap
-	 */
-	public void setOpen(boolean open){
-		
+	public void setOpen(boolean open) {
+
 		this.isOpen = open;
 
-		if (open) {
+		this.outFlow = open ? this.inFlow : 0.0;
 
-			this.outFlow = inFlow;
-
-			if (output != null) {
-
-				output.setFlow(outFlow);
-
-			}
-
-		} 
-
+		if (output != null) {
+			output.setFlow(this.outFlow);
+		}
 	}
 
 	public boolean isOpen() {
@@ -89,20 +77,14 @@ public class Tap extends Element {
 	}
 
 	@Override
-	public void setFlow(double Flow) {
+	public void setFlow(double flow) {
 
-		if(isOpen){
+		this.inFlow = flow;
+		this.outFlow = isOpen ? flow : 0.0;
 
-			this.outFlow = Flow;
-			this.inFlow = Flow;
-
-		} else {
-
-			this.inFlow = Flow;
-			this.outFlow = 0.0;
-
+		if (output != null) {
+			output.setFlow(this.outFlow);
 		}
-        
-    }
+	}
 
 }
